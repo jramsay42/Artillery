@@ -8,6 +8,9 @@ GRAVITY = 9.8
 """ Class for representing a particular artillery piece. """
 class Gun(object):
 
+    def __repr__(self):
+        return "Gun with position x: " + str(self.x) + " y: " + str(self.y)
+
     def __init__(self, x, y, elevation=45, azimuth=45, ammo=10):
         """ Constructor for the gun class.
 
