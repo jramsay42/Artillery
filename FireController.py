@@ -1,7 +1,10 @@
 
 import random
 import Gun
+import socket
 
+MIN_PLAYERS = 2
+MAX_PLAYERS = 30
 NUM_PLAYERS = 10
 MAX_X = 100
 MAX_Y = 100
@@ -12,13 +15,11 @@ class FireController(object):
     def __init__(self, numPlayers=NUM_PLAYERS):
         """ Constructor for the FireController class. Takes the
             number of players and grid size as arguments. 
-        
-            Preconditions:
-                0 < numPlayers <= 30
-                0 < maxX
-                0 < maxY
 
+            Preconditions:
+                MIN_PLAYERS <= numPlayers <= MAX_PLAYERS
         """
+
         self.numPlayers = numPlayers;
         self.maxX, self.maxY = self.generate_grid_size()
 
@@ -59,14 +60,33 @@ class FireController(object):
             of players. """
         return 100 + self.numPlayers * 10, 100 + self.numPlayers * 10 
          
+    def create_server(self):
+        """ Creates the server for client players to connect to. """
+        self.sock = socket.socket()
+
+        host = socket.gethostname()
+        port = 12345
+
+        self.sock.bind((host, port))
+
     def play_game(self):
         """ Main game logic. """
-        print(self.startingPositions)
         for gun in self.guns:
-            pass
+            print(gun)
 
 """ MAIN LOOP """
 if __name__ == "__main__":
-    numPlayers = int(input("Enter number of players: "))
+    
+    # Create new game
+    while (1):
+        numPlayers = int(input("Enter number of players: "))
+        if (numPlayers < MIN_PLAYERS or numPlayers > MAX_PLAYERS):
+            print("Invalid number of players. Must be between " + \
+            str(MIN_PLAYERS) + " and " + str(MAX_PLAYERS) + "\r\n")
+        else:
+            break
+
+    # Setup game state
     controller = FireController(numPlayers)
+    controller.create_server()
     controller.play_game()
