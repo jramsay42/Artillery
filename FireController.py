@@ -63,28 +63,46 @@ class FireController(object):
     def create_server(self):
         """ Creates the server for client players to connect to. """
         self.sock = socket.socket()
+        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-        host = socket.gethostname()
-        port = 12345
+        host = 'localhost' #socket.gethostname()
+        port = 31415
 
         self.sock.bind((host, port))
 
+        print("Waiting for players...")
+        numConnections = 0
+        self.sock.listen(numPlayers)
+        while True:
+            conn, addr = self.sock.accept()
+            numConnections += 1
+            print('Got connection from', addr)
+
+            if numConnections == numPlayers:
+                break
+            #conn.close()
+
+        print("All players connected.")
+
     def play_game(self):
         """ Main game logic. """
-        for gun in self.guns:
-            print(gun)
+        pass
+
 
 """ MAIN LOOP """
 if __name__ == "__main__":
     
     # Create new game
     while (1):
-        numPlayers = int(input("Enter number of players: "))
-        if (numPlayers < MIN_PLAYERS or numPlayers > MAX_PLAYERS):
-            print("Invalid number of players. Must be between " + \
-            str(MIN_PLAYERS) + " and " + str(MAX_PLAYERS) + "\r\n")
-        else:
-            break
+        try:
+            numPlayers = int(input("Enter number of players: "))
+            if (numPlayers < MIN_PLAYERS or numPlayers > MAX_PLAYERS):
+                print("Invalid number of players. Must be between " + \
+                str(MIN_PLAYERS) + " and " + str(MAX_PLAYERS) + ".")
+            else:
+                break
+        except ValueError:
+            print("Please enter a number.")
 
     # Setup game state
     controller = FireController(numPlayers)
