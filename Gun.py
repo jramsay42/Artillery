@@ -5,13 +5,18 @@ from math import radians
 EXIT_VELOCITY = 120
 GRAVITY = 9.8
 
-""" Class for representing a particular artillery piece. """
+DEFAULT_ELEVATION = 45
+DEFAULT_AZIMUTH = 45
+DEFAULT_AMMO = 10
+
 class Gun(object):
+    """ Class for representing a particular artillery piece. """
 
     def __repr__(self):
         return "Gun with position x: " + str(self.x) + " y: " + str(self.y)
 
-    def __init__(self, x, y, elevation=45, azimuth=45, ammo=10):
+    def __init__(self, x, y, elevation=DEFAULT_ELEVATION, azimuth=DEFAULT_AZIMUTH,
+                 ammo=DEFAULT_AMMO):
         """ Constructor for the gun class.
 
             Preconditons:
@@ -34,10 +39,10 @@ class Gun(object):
     def calculate_range(self):
         return EXIT_VELOCITY ** 2 * sin(2 * radians(self.elevation)) / GRAVITY 
 
-    def set_azimuth(self):
+    def set_azimuth(self, azimuth):
         self.azimuth = azimuth	
 
-    def set_elevation(self):
+    def set_elevation(self, elevation):
         self.elevation = elevation
 
     def move(self, x, y):

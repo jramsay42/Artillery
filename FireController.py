@@ -3,16 +3,13 @@ import random
 import Gun
 import socket
 
-MIN_PLAYERS = 2
-MAX_PLAYERS = 30
-NUM_PLAYERS = 10
 MAX_X = 100
 MAX_Y = 100
 
 """ Class for controlling the main game. """
 class FireController(object):
 
-    def __init__(self, numPlayers=NUM_PLAYERS):
+    def __init__(self, numPlayers):
         """ Constructor for the FireController class. Takes the
             number of players and grid size as arguments. 
 
@@ -59,52 +56,7 @@ class FireController(object):
         """ Generates the grid size dynammically, based off the number
             of players. """
         return 100 + self.numPlayers * 10, 100 + self.numPlayers * 10 
-         
-    def create_server(self):
-        """ Creates the server for client players to connect to. """
-        self.sock = socket.socket()
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-        host = 'localhost' #socket.gethostname()
-        port = 31415
-
-        self.sock.bind((host, port))
-
-        print("Waiting for players...")
-        numConnections = 0
-        self.sock.listen(numPlayers)
-        while True:
-            conn, addr = self.sock.accept()
-            numConnections += 1
-            print('Got connection from', addr)
-
-            if numConnections == numPlayers:
-                break
-            #conn.close()
-
-        print("All players connected.")
 
     def play_game(self):
         """ Main game logic. """
         pass
-
-
-""" MAIN LOOP """
-if __name__ == "__main__":
-    
-    # Create new game
-    while (1):
-        try:
-            numPlayers = int(input("Enter number of players: "))
-            if (numPlayers < MIN_PLAYERS or numPlayers > MAX_PLAYERS):
-                print("Invalid number of players. Must be between " + \
-                str(MIN_PLAYERS) + " and " + str(MAX_PLAYERS) + ".")
-            else:
-                break
-        except ValueError:
-            print("Please enter a number.")
-
-    # Setup game state
-    controller = FireController(numPlayers)
-    controller.create_server()
-    controller.play_game()
