@@ -1,0 +1,1 @@
+pytest tests/test_gun.py
