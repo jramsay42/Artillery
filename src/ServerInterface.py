@@ -12,7 +12,7 @@ class ServerInterface(object):
     def __init__(self, num_players):
         self.sock = None
         self.num_players = num_players
-        self.clients = set()
+        self.clients = list()
 
     def create_server(self):
         """ 

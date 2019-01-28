@@ -9,53 +9,47 @@ MAX_Y = 100
 """ Class for controlling the main game. """
 class FireController(object):
 
-    def __init__(self, numPlayers):
+    def __init__(self, num_players):
         """ Constructor for the FireController class. Takes the
-            number of players and grid size as arguments. 
+            number of players and grid size as arguments.
 
             Preconditions:
-                MIN_PLAYERS <= numPlayers <= MAX_PLAYERS
+                MIN_PLAYERS <= num_players <= MAX_PLAYERS
         """
 
-        self.numPlayers = numPlayers;
-        self.maxX, self.maxY = self.generate_grid_size()
+        self.num_players = num_players
+        self.max_x, self.max_y = self.generate_grid_size()
 
         self.setup_guns()
 
     def setup_guns(self):
         """ Generates the guns with suitable starting conditions. """
         self.guns = []
+        self.starting_positions = []
 
-        self.startingPositions = {}
-        for i in range(0, self.numPlayers):
-            x, y = self.generate_starting_positions()
+        for i in range(0, self.num_players):
+            x_pos, y_pos = self.generate_starting_positions()
+            self.starting_positions.append((x_pos, y_pos))
 
-            newGun = Gun.Gun(x, y)
-            self.guns.append(newGun)
+            new_gun = Gun.Gun(x_pos, y_pos)
+            self.guns.append(new_gun)
 
     def generate_starting_positions(self):
         """ Generates the ith player's starting positions. """
-        x = random.randint(0, self.maxX)
-        y = random.randint(0, self.maxY)
+        x_guess = random.randint(0, self.max_x)
+        y_guess = random.randint(0, self.max_y)
 
-        # Check if key exists, regenerate if neccesary
-        try:
-            self.startingPositions[hash(x) * hash(y)]
-        except KeyError:
-            x = random.randint(0, self.maxX)
-            y = random.randint(0, self.maxY)
+        #Regenerate starting positions until they are unique
+        while (x_guess, y_guess) in self.starting_positions:
+            x_guess = random.randint(0, self.max_x)
+            y_guess = random.randint(0, self.max_y)
 
-
-        self.startingPositions[hash(x) * hash(y)] = x,y
-
-        #Make sure starting positions are suitably distant
-
-        return x, y 
+        return x_guess, y_guess
 
     def generate_grid_size(self):
         """ Generates the grid size dynammically, based off the number
             of players. """
-        return 100 + self.numPlayers * 10, 100 + self.numPlayers * 10 
+        return 100 + self.num_players * 10, 100 + self.num_players * 10 
 
     def play_game(self):
         """ Main game logic. """
