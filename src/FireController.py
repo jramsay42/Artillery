@@ -27,7 +27,7 @@ class FireController(object):
         self.guns = []
         self.starting_positions = []
 
-        for i in range(0, self.num_players):
+        for _ in range(0, self.num_players):
             x_pos, y_pos = self.generate_starting_positions()
             self.starting_positions.append((x_pos, y_pos))
 

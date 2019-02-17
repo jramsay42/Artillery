@@ -6,19 +6,25 @@ MIN_PLAYERS = 2
 MAX_PLAYERS = 30
 GAME_PORT = 31415
 
-class ServerInterface(object):
-    """ Class for managing client-server interactions. """
+class GameServer(object):
+    """ 
+        Game server that offers clients a choice of action,
+        then reads the response and updates its representation
+        of the game accordingly. The other clients are then
+        informed of the changes.
+     """
 
     def __init__(self, num_players):
         self.sock = None
         self.num_players = num_players
         self.clients = list()
+        self.controller = FireController.FireController(numPlayers)
 
     def create_server(self):
-        """ 
+        """
             Creates the server for client players to connect to.
             Then waits until the requisite number of players are
-            connected. 
+            connected.
         """
         try:
             server_address = [ip for ip in \
@@ -41,15 +47,23 @@ class ServerInterface(object):
             while num_connections != self.num_players:
                 conn, addr = self.sock.accept()
                 print('Got connection from', addr)
+
+                conn.send('Size {},{}'.format(self.controller.max_x, \
+                        self.controller.max_y).encode('utf-8'))
+                (x_start, y_start) = \
+                        self.controller.starting_positions[num_connections]
+                conn.send('Start {},{}'.format(x_start, y_start).encode('utf-8'))
+                self.clients.append(conn)
+
                 num_connections += 1
                 
-                data = conn.recv(100)
-                print(repr(data))
-           
+
             print("All players connected.")
 
         except socket.error:
             print("There was a socket error.")
+
+        self.controller.play_game()
 
 """ MAIN LOOP """
 if __name__ == "__main__":
@@ -67,7 +81,5 @@ if __name__ == "__main__":
             print("Please enter a number.")
 
     # Setup game state
-    master = ServerInterface(numPlayers)
+    master = GameServer(numPlayers)
     master.create_server()
-    controller = FireController.FireController(numPlayers)
-    controller.play_game()
